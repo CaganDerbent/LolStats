@@ -1,0 +1,586 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+
+
+  
+
+
+  
+}
+
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* Set to 100% of the viewport height */
+  background-color: rgb(26, 25, 29);
+}
+
+.profile {
+  width: 70%;
+  background-color: rgb(26, 25, 29);
+  margin-top: 50px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 50px;
+}
+
+h1{
+
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+
+}
+
+.general{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin-top: 50px;
+  
+}
+
+.footer{
+  position: fixed;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(20, 20, 20);
+
+  width: 100%;
+  height: 50px;
+  bottom: 0;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+
+
+}
+
+
+.navbar{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content:space-around;
+  width: 100%;
+  height: 40px;
+  color: whitesmoke;
+  background-color: rgb(20, 20, 20);
+}
+
+.navbar ul li{
+  text-decoration: none;
+  list-style: none;
+  
+}
+
+.link{
+  color: whitesmoke;
+  text-decoration: none;
+}
+
+.icon{
+  width: 250px;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.level{
+  width: 60px;
+  height: 25px;
+  border-radius: 40px;
+  background-color: rgb(35, 35, 53);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: whitesmoke;
+  border: 2px solid whitesmoke;
+  margin-top: -16px;
+}
+
+.ranks{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.rank{
+  width: 360px;
+  height: 180px;
+  background-color: rgb(45, 46, 63);
+  margin: 20px;
+  border-radius: 12px;
+  position: relative;
+  color: whitesmoke;
+
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.title{
+  display: flex;
+  align-items: center;
+  height: 24px;
+  padding-left: 12px;
+  font-size: 16px;
+  background-color: rgb(34, 34, 46);
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  
+}
+
+.rank h2{
+  position: absolute;
+  font-size: 12px;
+  font-weight: 600;
+ 
+}
+#elo{
+  left: 160px;
+  top: 50px;
+}
+
+.rank #lp{
+  left: 51px;
+  top: 150px;
+  padding-left: 6px;
+  padding-right: 6px;
+  background-color: rgb(41, 120, 209);;
+  border-radius: 6px;
+  color: whitesmoke;
+ 
+ 
+}
+
+.rank #win{
+  left: 160px;
+  top: 80px;
+
+  color: #22c78a;
+ 
+}
+
+.rank #loss{
+  left: 190px;
+  top: 80px;
+
+  color: red;}
+
+
+.rank #wr{
+  left: 160px;
+  top: 110px;
+ 
+ 
+}
+
+
+
+.main {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+
+.main::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("./8359896.jpg");
+  background-size: cover;
+  z-index: -1;
+}
+
+.inputarea{
+  width: 500px;
+  height: 50px;
+  margin-top: 150px;
+  
+  
+
+}
+
+.fa-brands{
+  margin-left: 30px;
+  margin-right: 30px;
+}
+#text{
+  padding-left: 16px;
+  padding-right: 16px;
+  font-size: 16px;
+  display: inline;
+  border-radius: 20px;
+  color: black;
+  width: 250px;
+  height: 40px;
+  border: none;
+  border-radius: 20px 0px 0px 20px;
+  box-sizing: border-box;
+}
+#text:focus{
+  outline: 0;
+}
+#searchbutton{
+  transition: 0.1s;
+  padding-right: 32px;
+  padding-left: 12px;
+  display: inline;
+  border-radius: 0px 20px 20px 0px;
+  border: none;
+  background-color: #0731bb;
+  width: 60px;
+  height: 40px;
+  box-sizing: border-box;
+}
+
+#search{
+  transition: 0.3s;
+  position: absolute;
+  top: 12px;
+  right: 15px;
+}
+#searchbutton:hover{
+  cursor: pointer;
+  background-color: #000294;
+  
+}
+#searchbutton:active{
+  background-color: #0a0b5a;
+}
+
+.matches{
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 20px;
+  
+}
+
+.match{
+  background-color: rgb(45, 46, 63);
+  width: 760px;
+  height: 200px;
+  margin: 5px;
+  border-radius: 10px;
+  position: relative;
+  font-weight: 600px;
+  color: whitesmoke;
+
+  
+
+}
+
+.match img{
+  width: 80px;
+  height: 80px;
+  border-radius: 80px;
+  border: 2px solid whitesmoke;
+ 
+ 
+}
+
+.match .itemimg{
+  width: 32px;
+  height: 32px;
+  border-radius: 0;
+  border: none;
+  margin: 2px;
+}
+
+.image{
+  width: 80px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  left: 20px;
+}
+.kda{
+  position: absolute;
+  top: 30px;
+  font-size: 16px;
+  left: 200px;
+}
+#cs{
+  position: absolute;
+  top: 48px;
+}
+.itemlist{
+  position: absolute;
+  left: 200px;
+  top: 105px;
+}
+
+.matchtitle{
+  position: absolute;
+  left: 16px;
+  font-size: 16px;
+  top: 6px;
+}
+
+
+
+.match span{
+  position: absolute;
+  top: 25px;
+  font-size: 16px;
+  left: 0px;
+  
+}
+
+.match #st{
+  position: absolute;
+  left: 35px;
+  font-size: 20px;
+  font-weight: 600;
+  top: 150px;
+
+}
+
+.clevel{
+  width: 25px;
+  height: 25px;
+  border-radius: 25px;
+  background-color: rgb(35, 35, 53);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: whitesmoke;
+  border: 2px solid whitesmoke;
+  margin-top: -20px;
+  margin-left: 48px;
+}
+
+.status{
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 200px;
+  width: 8px;
+  border-radius: 4px;
+  
+}
+
+#spell{
+  position: absolute;
+  top: 0;
+  right: -47px;
+  border-radius: 0;
+  border: none;
+}
+#spell2{
+  position: absolute;
+  top: 44px;
+  right: -47px;
+  border-radius: 0;
+  border: none;
+}
+
+#spell3{
+  position: absolute;
+  top: 0px;
+  right: -90px;
+  background-color: rgb(35, 35, 53);
+  border: none;
+}
+
+#spell4{
+  position: absolute;
+  top: 49px;
+  right: -85px;
+  border: none;
+}
+
+#tittle{
+  position: absolute;
+  width: 200px;
+  top: 0px;
+  left: 6px;
+  font-size: 16px;
+}
+
+.section{
+  display: flex;
+  flex-direction: row;
+  height: 144px;
+  margin-top: 10px;
+}
+
+.topc{
+  position: relative;
+  height:150px ;
+  width: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  justify-content: center;
+}
+
+.namec{
+  position: absolute;
+  top: 0px;
+  font-size: 20px;
+}
+
+.pts{
+  position: absolute;
+  top: 125px;
+}
+
+.sectionn{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+  
+
+}
+
+.heros{
+  width: 360px;
+  margin: 25px;
+ 
+}
+
+.tab{
+  display: flex;
+  flex-direction: row;
+  width: 280px;
+  height: 200px;
+  position: absolute;
+  right: 0;
+  margin-right: 16px;
+}
+
+.team{
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+}
+.participant{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  position: relative;
+}
+
+.participant span{
+  position: absolute;
+  display: flex;
+  font-size: 12px;
+  text-align: center;
+  align-items: center;
+}
+.participant span img{
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 0;
+  margin-right: 6px;
+}
+
+#team1{
+  color: rgb(41, 120, 209);
+}
+#team2{
+  color: rgb(219, 87, 87);
+}
+
+.xxx{
+  margin-top: 150px;
+  display: flex;
+  align-items: center;
+}
+
+.rotation h1{
+  padding: 20px;
+  text-align: center;
+  color: whitesmoke;
+
+ 
+}
+
+.rotation .line{
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.list{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+
+.info{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin: 20px;
+}
+
+.champion{
+  width: 100%;
+  height: 150px;
+  background-color: rgb(45, 46, 63);
+  margin: 1px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  padding: 10px;
+}
+
+.champion img{
+  width: 80px;
+  height: 80px;
+  border-radius: 80px;
+  border: 2px solid whitesmoke;
+}
+
+.imagest{
+  width: 80px;
+}
+
+.line{
+  width: 70%;
+  height: 2px;
+  background-color: whitesmoke;
+}
+
+
+
+
+
+
