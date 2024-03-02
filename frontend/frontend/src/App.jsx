@@ -11,6 +11,8 @@ import Champions from './Components/Champions'
 
 function App() {
 
+  const key= 'RGAPI-499374a8-8962-4e81-a8a8-000186aaf9b2';
+
 
   return (
     <>
@@ -19,9 +21,9 @@ function App() {
     <Navbar/>
 
       <Routes>
-         <Route path='/summoner/:id' element={<Summoner/>}></Route>
-         <Route path='/' element={<Main/>}></Route>
-         <Route path='/champions' element={<Champions/>}></Route>
+         <Route path='/summoner/:id' element={<Summoner API_KEY={key}/>}></Route>
+         <Route path='/' element={<Main API_KEY={key}/>}></Route>
+         <Route path='/champions' element={<Champions API_KEY={key}/>}></Route>
 
       </Routes>
       <Footer/>

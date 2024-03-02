@@ -24,10 +24,10 @@ import champion from '../champion.json'
 
 
 
-const Summoner = () => {
+const Summoner = ({API_KEY}) => {
 
     
-    const API_KEY = 'RGAPI-aef5a208-6ef6-42c0-a091-10959449b4c7';
+  
 
     const constant = 2;
     
@@ -71,6 +71,8 @@ const Summoner = () => {
     const [unrank2,setUnrank2] = useState(false)
 
     const img = `https://ddragon.leagueoflegends.com/cdn/14.3.1/img/profileicon/${img_id}.png`
+
+    
 
  
 
@@ -321,12 +323,12 @@ const Summoner = () => {
 
     useEffect(() => {
         const getmatches = async () => {
-            console.log("istek yollandı");
     
             try {
                 const response = await fetch(`http://localhost:3030/matchId`, {
                     method: 'GET',
                 });
+                console.log("istek yollandı");
     
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -605,8 +607,9 @@ setStats(sortedChampStats);
                   <div className="title2"  style={{textAlign:"center",color:"whitesmoke"}}>CHAMPION STATS</div>
                   {champStats && champStats.map((stats)=>(
                     <div className="champion" key={stats.name}>
+                     <div className="wl"> <span style={{color:"rgb(34, 199, 138)"}}>{stats.wins}W</span> <span style={{color:"red"}}> {stats.losses}L</span></div>
                       <div className="imagest">
-                      <h2  style={{fontSize:"18px",fontWeight:"600",color:"whitesmoke",textAlign:"center",paddingBottom:"5px"}}>{stats.name.toUpperCase()}</h2>
+                      <h2  style={{fontSize:"18px",fontWeight:"600",color:"whitesmoke",textAlign:"center",paddingBottom:"5px"}}>{stats.name.toUpperCase()} </h2>
                       <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${stats.name}.png`} alt="" style={{marginTop:"5px",marginBottom:"15px"}} />
                       </div>
                       <div className="avg" style={{paddingLeft:"12px",paddingTop:"12px"}}>
@@ -643,14 +646,17 @@ setStats(sortedChampStats);
         
     </div>
     <div className="itemlist">
-      <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item0}.png`} className="itemimg" alt="" />
-      <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item1}.png`} className="itemimg" alt="" />
-      <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item2}.png`} className="itemimg" alt="" />
-      <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item3}.png`} className="itemimg" alt="" />
-      <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item4}.png`} className="itemimg" alt="" />
-      <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item5}.png`} className="itemimg" alt="" />
-      <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item6}.png`} className="itemimg" alt="" />
-      
+
+    <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item0}.png`} className="itemimg" alt="" />
+    <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item1}.png`} className="itemimg" alt="" />
+    <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item2}.png`} className="itemimg" alt="" />
+    <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item3}.png`} className="itemimg" alt="" />
+    <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item4}.png`} className="itemimg" alt="" />
+    <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item5}.png`} className="itemimg" alt="" />
+    <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item6}.png`} className="itemimg" alt="" />
+     
+    
+     
       
     </div>
     {meta && meta.length > 0 && (
@@ -893,6 +899,7 @@ setStats(sortedChampStats);
             
         </div>
         <div className="itemlist">
+
           <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item0}.png`} className="itemimg" alt="" />
           <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item1}.png`} className="itemimg" alt="" />
           <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item2}.png`} className="itemimg" alt="" />
@@ -900,6 +907,8 @@ setStats(sortedChampStats);
           <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item4}.png`} className="itemimg" alt="" />
           <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item5}.png`} className="itemimg" alt="" />
           <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item6}.png`} className="itemimg" alt="" />
+
+          
           
           
         </div>

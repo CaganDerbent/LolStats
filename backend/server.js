@@ -11,7 +11,7 @@ let data = {};
 let matches = [];
 let matchinfo = [];
 
-const API_KEY = 'RGAPI-aef5a208-6ef6-42c0-a091-10959449b4c7'
+const API_KEY = 'RGAPI-499374a8-8962-4e81-a8a8-000186aaf9b2'
 
 app.use(cors({
     origin: "http://localhost:5173",

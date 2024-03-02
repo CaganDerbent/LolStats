@@ -3,9 +3,9 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom"
 
 
-const Main = ()=>{
+const Main = ({API_KEY})=>{
 
-    const API_KEY = 'RGAPI-aef5a208-6ef6-42c0-a091-10959449b4c7'
+  
 
     const [name,setName] = useState("");
     const [data,setData] = useState("");
