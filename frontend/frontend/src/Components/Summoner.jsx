@@ -573,7 +573,7 @@ setStats(sortedChampStats);
                             <img src={rankimg} alt="" style={{ width: "140px", height: "140px"}} />
                             <h2 id="elo">{rank.tier} {rank.rank}</h2>
                             <h2 id="lp">{rank.leaguePoints} LP</h2>
-                            <h2 id="win">{rank.wins}W</h2>
+                            <h2 id="win">{rank.wins}W </h2>
                             <h2 id="loss">{rank.losses}L</h2>
                             <h2 id="wr">WIN RATE {(((rank.wins) / (rank.losses + rank.wins)) * 100).toFixed(2)}%</h2>
                         </div>
