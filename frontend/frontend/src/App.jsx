@@ -11,7 +11,7 @@ import Champions from './Components/Champions'
 
 function App() {
 
-  const key= 'RGAPI-499374a8-8962-4e81-a8a8-000186aaf9b2';
+  const key = import.meta.env.VITE_API_KEY
 
 
   return (
@@ -28,13 +28,6 @@ function App() {
       </Routes>
       <Footer/>
     </BrowserRouter>
-
-  
-    
-
-   
-
-    
     </>
   )
 }

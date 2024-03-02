@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const cors = require("cors");
+require("dotenv").config();
 
 
 
@@ -11,7 +12,7 @@ let data = {};
 let matches = [];
 let matchinfo = [];
 
-const API_KEY = 'RGAPI-499374a8-8962-4e81-a8a8-000186aaf9b2'
+const API_KEY =  process.env.apiKey
 
 app.use(cors({
     origin: "http://localhost:5173",
@@ -113,7 +114,8 @@ app.get("/matchIds", async(req,res)=>{
                 
             
         } catch (err) {
-            console.error(err);
+            console.log(err);
+            res.status(404).json(err)
         }
     
         

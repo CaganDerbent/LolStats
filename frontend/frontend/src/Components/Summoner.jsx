@@ -15,23 +15,10 @@ import challenger from '../ranks/Rank=Challenger.png'
 import unranked from '../ranks/unrank.png'
 import champion from '../champion.json'
 
-
-
-
-
-
-
-
-
-
 const Summoner = ({API_KEY}) => {
 
     
-  
-
     const constant = 2;
-    
-
     const location = useLocation();
 
     let i = 0;
@@ -42,9 +29,9 @@ const Summoner = ({API_KEY}) => {
     const puuid = summonerData.puuid;
     const summoner_id = summonerData.id;
 
-    const [mastery,setMastery] = useState([]);
+    const [error,setError] = useState(false)
 
-    
+    const [mastery,setMastery] = useState([]);
 
     const [champion1,setChampion] = useState("");
     const [champion2,setChampion2] = useState("");
@@ -72,10 +59,6 @@ const Summoner = ({API_KEY}) => {
 
     const img = `https://ddragon.leagueoflegends.com/cdn/14.3.1/img/profileicon/${img_id}.png`
 
-    
-
- 
-
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   useEffect(() => {
@@ -92,11 +75,6 @@ const Summoner = ({API_KEY}) => {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
-
-  
-   
-
-    
 
     useEffect(() => {
         const top3 = async () => {
@@ -140,9 +118,6 @@ const Summoner = ({API_KEY}) => {
                         setChampion3(championsArray[i].name)
                     }
                 }
-
-
-              
                 
               }
             
@@ -282,8 +257,6 @@ const Summoner = ({API_KEY}) => {
     }
 }
     
-
-
         ranking();
     },[]);
 
@@ -315,23 +288,24 @@ const Summoner = ({API_KEY}) => {
                 console.error(err);
             }
 
-          
-
         }
         senddata();
     },[])
 
     useEffect(() => {
         const getmatches = async () => {
+          console.log("istek yollandı");
     
             try {
                 const response = await fetch(`http://localhost:3030/matchId`, {
                     method: 'GET',
                 });
-                console.log("istek yollandı");
+               
     
                 if (!response.ok) {
+                    console.log("error")
                     throw new Error(`HTTP error! Status: ${response.status}`);
+                    
                 }
     
                 const body = await response.json();
@@ -379,9 +353,7 @@ const Summoner = ({API_KEY}) => {
                         if (mac1kisiler[i].teamId === 200) {
           
                             team200.push(updatedMatchlist[0][j].info.participants[i]);
-                           
-
-                            
+                          
                         }
 
                     }
@@ -411,7 +383,6 @@ for (let i = 0; i < updatedUser.length; i++) {
       };
     }
 
-   
     championStats[user.championName].name = user.championName;
     championStats[user.championName].matchesPlayed++;
     championStats[user.championName].deaths += user.deaths;
@@ -433,10 +404,6 @@ for (let i = 0; i < updatedUser.length; i++) {
   }
 }
 
-
-
-
-
 const statsArray = Object.values(championStats)
 
 const sortedChampStats = statsArray.slice().sort((a, b) => b.matchesPlayed - a.matchesPlayed);
@@ -444,10 +411,6 @@ const sortedChampStats = statsArray.slice().sort((a, b) => b.matchesPlayed - a.m
 
 setStats(sortedChampStats);
 
-
-
-                
-                
                 setUser(updatedUser);
                 setMeta(updatedMeta);
 
@@ -455,15 +418,14 @@ setStats(sortedChampStats);
                 setteam2(team201)
                 
             } catch (err) {
-                console.error(err);
+                console.log("error");
+                setError(true);
             }
         };
     
         getmatches();
     }, [constant]);
     
-   
-
     useEffect(()=>{
         const matchinfo= async ()=>{
 
@@ -484,26 +446,14 @@ setStats(sortedChampStats);
     
     
             } catch (err) {
-                console.error(err);
+                console.log("error");
             }
-
-    
-
-        } 
-                
-
-          
-
-        
+        }
         matchinfo();
     },[])
 
 
 
-  
-    
-
-    
     if(windowWidth >=1150){
     return (
         <div className="profile">
@@ -549,13 +499,7 @@ setStats(sortedChampStats);
       </>
     )}
   </div>
-))}
-    
-
-                    
-                    
-
-                    
+))}    
                 </div>
                           
             </div>
@@ -603,8 +547,8 @@ setStats(sortedChampStats);
 
             </div>
             <div className="sectionn">
-                <div className="heros">
-                  <div className="title2"  style={{textAlign:"center",color:"whitesmoke"}}>CHAMPION STATS</div>
+                {error ? " " :<div className="heros">
+                  {error ? "" :<div className="title2"  style={{textAlign:"center",color:"whitesmoke"}}>CHAMPION STATS</div>}
                   {champStats && champStats.map((stats)=>(
                     <div className="champion" key={stats.name}>
                      <div className="wl"> <span style={{color:"rgb(34, 199, 138)"}}>{stats.wins}W</span> <span style={{color:"red"}}> {stats.losses}L</span></div>
@@ -623,9 +567,9 @@ setStats(sortedChampStats);
                   ))}
                   
 
-                </div>
+                </div>}
                 <div className="matches">
-                <div className="title2" style={{textAlign:"center",color:"whitesmoke"}}>MATCH HISTORY</div>
+                {error ? <div className="title2" style={{textAlign:"center",color:"whitesmoke",textAlignLast:"center",position:"absolute"}}>MATCH DATA NOT FOUND</div>:<div className="title2" style={{textAlign:"center",color:"whitesmoke"}}>MATCH HISTORY</div>}
             {user && user.map((match, index) => (
   <div className="match" key={match.puuid}>
     {match.win ? <div className="status"style={{backgroundColor:"#22c78a"}}><span id="st" style={{color:"#22c78a"}}>WIN</span> </div> : <div className="status" style={{backgroundColor:"red"}}><span id="st" style={{color:"red"}}>LOSS</span> </div> }
@@ -857,8 +801,8 @@ setStats(sortedChampStats);
     
                 </div>
                 <div className="sectionn">
-                <div className="heros">
-                <div className="title2" style={{textAlign:"center",color:"whitesmoke"}}>CHAMPION STATS</div>
+                {error ? "" :<div className="heros">
+                {error ? "" :<div className="title2" style={{textAlign:"center",color:"whitesmoke"}}>CHAMPION STATS</div>}
                   {champStats && champStats.map((stats)=>(
                     <div className="champion" key={stats.name}>
                       <div className="imagest">
@@ -876,9 +820,9 @@ setStats(sortedChampStats);
                   ))}
                   
 
-                </div>
+                </div>}
                     <div className="matches">
-                    <div className="title2" style={{textAlign:"center",color:"whitesmoke"}}>MATCH HISTORY</div>
+                    {error ? <div className="title2" style={{textAlign:"center",color:"whitesmoke"}}>MATCH DATA NOT FOUND</div> :<div className="title2" style={{textAlign:"center",color:"whitesmoke"}}>MATCH HISTORY</div>}
                 {user && user.map((match, index) => (
       <div className="match" key={match.puuid} style={{width:"350px"}}>
         {match.win ? <div className="status"style={{backgroundColor:"#22c78a"}}><span id="st" style={{color:"#22c78a"}}>WIN</span> </div> : <div className="status" style={{backgroundColor:"red"}}><span id="st" style={{color:"red"}}>LOSS</span> </div> }
@@ -965,19 +909,14 @@ setStats(sortedChampStats);
     )}
             
             </div>
-          
-          
-    
         )}
         
         
       </div>
     ))}
-    
     </div>
                 </div>
                 </div>
-    
         );
 
     }

@@ -5,8 +5,6 @@ import { Link, useNavigate } from "react-router-dom"
 
 const Main = ({API_KEY})=>{
 
-  
-
     const [name,setName] = useState("");
     const [data,setData] = useState("");
     const [err,setErr] = useState(false)
@@ -43,20 +41,15 @@ const Main = ({API_KEY})=>{
     };
 
 
-
     return(
         <>
         <div className="main">
 
             <div className="xxx">
-
                 <input type="text" placeholder="SummonerName + (#TR1)" id='text' autoComplete="off"  onChange={(e) => setName(e.target.value)} value={name}/>
                 <button onClick={find} id="searchbutton" style={{backgroundColor:"rgb(45, 46, 63)",color:"whitesmoke",fontSize:"16px"}}>Find</button>
-
-
             </div>
           
-
         {err ? <h1 style={{color:"whitesmoke",marginTop:"30px"}}>Summoner name not found.</h1> :<h1></h1>}
 
         </div>

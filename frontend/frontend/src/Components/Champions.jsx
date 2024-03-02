@@ -3,9 +3,6 @@ import champion from '../champion.json'
 
 const Champions = ({API_KEY})=>{
 
-
-  
-
     const [data,setData] = useState("");
     const [arr,setArr] = useState([])
     const [arr2,setArr2] = useState([])
@@ -13,7 +10,6 @@ const Champions = ({API_KEY})=>{
     useEffect(()=>{
 
         async function findchampion (){
-        
         
             try {
                 const response = await fetch(`https://tr1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key=${API_KEY}`, {
@@ -85,9 +81,6 @@ const Champions = ({API_KEY})=>{
 
     },[])
 
-
-
-  
    
     return(
         <>
