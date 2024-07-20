@@ -7,11 +7,6 @@
   font-weight: 600;
   font-style: normal;
 
-
-  
-
-
-  
 }
 
 .root {
@@ -151,12 +146,12 @@ h1{
  
 }
 #elo{
-  left: 160px;
+  left: 172px;
   top: 50px;
 }
 
 .rank #lp{
-  left: 51px;
+  left: 63px;
   top: 150px;
   padding-left: 6px;
   padding-right: 6px;
@@ -167,8 +162,9 @@ h1{
  
 }
 
+
 .rank #win{
-  left: 160px;
+  left: 172px;
   top: 80px;
 
   color: #22c78a;
@@ -176,14 +172,14 @@ h1{
 }
 
 .rank #loss{
-  left: 200px;
+  left: 212px;
   top: 80px;
 
   color: red;}
 
 
 .rank #wr{
-  left: 160px;
+  left: 172px;
   top: 110px;
  
  
@@ -240,6 +236,23 @@ h1{
   box-sizing: border-box;
 }
 #text:focus{
+  outline: 0;
+}
+
+#text2{
+  padding-left: 16px;
+  padding-right: 16px;
+  font-size: 16px;
+  display: inline;
+  color: black;
+  width: 250px;
+  height: 40px;
+  border: none;
+  border-left: 1px solid gray;
+
+  box-sizing: border-box;
+}
+#text2:focus{
   outline: 0;
 }
 #searchbutton{

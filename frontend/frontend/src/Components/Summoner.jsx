@@ -24,10 +24,8 @@ const Summoner = ({API_KEY}) => {
     let i = 0;
 
     const summonerData = location.state;
-
-    const img_id = summonerData.profileIconId;
     const puuid = summonerData.puuid;
-    const summoner_id = summonerData.id;
+   
 
     const [error,setError] = useState(false)
 
@@ -57,7 +55,12 @@ const Summoner = ({API_KEY}) => {
     const [unrank,setUnrank] = useState(false)
     const [unrank2,setUnrank2] = useState(false)
 
-    const img = `https://ddragon.leagueoflegends.com/cdn/14.3.1/img/profileicon/${img_id}.png`
+    const [infok,setİnfo] = useState("")
+
+    const [summoner_id,setsumId] = useState("")
+    const [img_id,setimgId] = useState("")
+
+    
 
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
@@ -76,6 +79,132 @@ const Summoner = ({API_KEY}) => {
     };
   }, []);
 
+  useEffect(() => {
+    const getinfoAndMatches = async () => {
+        try {
+            const responseInfo = await fetch(`https://tr1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${puuid}?api_key=${API_KEY}`, {
+                method: 'GET'
+            });
+
+            if (!responseInfo.ok) {
+                throw new Error(`HTTP error! Status: ${responseInfo.status}`);
+            }
+
+            const bodyInfo = await responseInfo.json();
+            setİnfo(bodyInfo);
+            setsumId(bodyInfo.id);
+            setimgId(bodyInfo.profileIconId);
+
+           
+            const responseMatches = await fetch(`http://localhost:3030/matchId`, {
+                method: 'GET',
+            });
+
+            if (!responseMatches.ok) {
+                console.log("error");
+                throw new Error(`HTTP error! Status: ${responseMatches.status}`);
+            }
+
+            const bodyMatches = await responseMatches.json();
+            console.log(bodyMatches);
+
+            const updatedMatchlist = [...matchlist, bodyMatches];
+
+            const updatedUser = [];
+            const updatedMeta = [];
+            const team101 = [];
+            const team201 = [];
+
+            for (let j = 0; j < 20; j++) {
+                const team100 = [];
+                const team200 = [];
+
+                const mac1 = updatedMatchlist[0][j];
+                const mac1info = mac1.info;
+                updatedMeta.push(mac1info);
+
+                const mac1kisiler = mac1info.participants;
+
+                for (let i = 0; i < 10; i++) {
+                    //console.log('Summoner ID:', mac1kisiler[i].summonerId);
+                    //console.log('Expected Summoner ID:',bodyInfo.id );
+                    if (mac1kisiler[i].summonerId === bodyInfo.id ) { 
+                        updatedUser.push(updatedMatchlist[0][j].info.participants[i]);
+                    }
+
+                    if (mac1kisiler[i].teamId === 100) {
+                        team100.push(updatedMatchlist[0][j].info.participants[i]);
+                    }
+                    if (mac1kisiler[i].teamId === 200) {
+                        team200.push(updatedMatchlist[0][j].info.participants[i]);
+                    }
+                }
+                team101.push(team100);
+                team201.push(team200);
+            }
+
+            const championStats = {};
+            for (let i = 0; i < updatedUser.length; i++) {
+                const user = updatedUser[i];
+
+                if (user.championName !== "") {
+                    if (!championStats[user.championName]) {
+                        championStats[user.championName] = {
+                            name: "",
+                            kills: 0,
+                            deaths: 0,
+                            assists: 0,
+                            matchesPlayed: 0,
+                            wins: 0,
+                            losses: 0,
+                            cs: 0
+                        };
+                    }
+
+                    championStats[user.championName].name = user.championName;
+                    championStats[user.championName].matchesPlayed++;
+                    championStats[user.championName].deaths += user.deaths;
+                    championStats[user.championName].assists += user.assists;
+                    championStats[user.championName].kills += user.kills;
+                    championStats[user.championName].cs += user.totalMinionsKilled;
+
+                    if (user.win === true) {
+                        championStats[user.championName].wins++;
+                    }
+                    if (user.win === false) {
+                        championStats[user.championName].losses++;
+                    }
+                }
+            }
+
+            const statsArray = Object.values(championStats);
+            const sortedChampStats = statsArray.slice().sort((a, b) => b.matchesPlayed - a.matchesPlayed);
+
+            setStats(sortedChampStats);
+            setUser(updatedUser);
+            setMeta(updatedMeta);
+
+            console.log(updatedUser);
+
+            setteam1(team101);
+            setteam2(team201);
+
+        } catch (err) {
+            console.log(err);
+            setError(true);
+        }
+    };
+
+    getinfoAndMatches();
+}, [puuid, API_KEY]);
+
+
+ 
+  //const summoner_id = infok.id;
+  //const img_id = infok.profileIconId;
+  const img = `https://ddragon.leagueoflegends.com/cdn/14.3.1/img/profileicon/${img_id}.png`
+
+  
     useEffect(() => {
         const top3 = async () => {
           try {
@@ -130,7 +259,6 @@ const Summoner = ({API_KEY}) => {
       }, [constant, setChampion]); 
       
      
-
     useEffect(()=>{
         const ranking = async ()=>{
 
@@ -258,7 +386,7 @@ const Summoner = ({API_KEY}) => {
 }
     
         ranking();
-    },[]);
+    },[summoner_id]);
 
     useEffect(()=>{
         const senddata = async ()=>{
@@ -292,6 +420,8 @@ const Summoner = ({API_KEY}) => {
         senddata();
     },[])
 
+    
+
     useEffect(() => {
         const getmatches = async () => {
           console.log("istek yollandı");
@@ -309,7 +439,7 @@ const Summoner = ({API_KEY}) => {
                 }
     
                 const body = await response.json();
-                console.log("cevapgeldi");
+                console.log(body);
                
     
                 const updatedMatchlist = [...matchlist, body];
@@ -414,17 +544,20 @@ setStats(sortedChampStats);
                 setUser(updatedUser);
                 setMeta(updatedMeta);
 
+                console.log(updatedUser)
+
                 setteam1(team101)
+                console.log(team101)
                 setteam2(team201)
                 
             } catch (err) {
-                console.log("error");
+                console.log(err);
                 setError(true);
             }
         };
     
         getmatches();
-    }, [constant]);
+    }, [constant]); ////
     
     useEffect(()=>{
         const matchinfo= async ()=>{
@@ -458,10 +591,10 @@ setStats(sortedChampStats);
     return (
         <div className="profile">
             <div className="general">
-                <h1 style={{color:"whitesmoke"}}>{summonerData.name.toUpperCase()}</h1>
+                <h1 style={{color:"whitesmoke"}}>{summonerData.gameName.toUpperCase()}</h1>
                 <div className="icon">
                     <img src={img} alt="" style={{ width: "150px", height: "150px", borderRadius: "150px", border: "2px solid whitesmoke",marginTop:"25px" }} />
-                    <div className="level">{summonerData.summonerLevel}</div>
+                    <div className="level">{infok.summonerLevel}</div>
                 </div>
             </div>
             <div className="ranks">
@@ -476,8 +609,19 @@ setStats(sortedChampStats);
       <>
         <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${champion1}.png`} alt="" style={{ width: "50px", height: "50px" }} />
         <h2 className="namec">{champion1}</h2>
+        {hero.championLevel >= 10 ? 
+        <> 
+        <img src={`/clevels/10.png`} alt="" style={{ width: "50px", height: "50px" }} />
+        <h2 className="pts">{hero.championPoints} pts</h2>
+        </>
+        
+        :
+        <>
         <img src={`/clevels/${hero.championLevel}.png`} alt="" style={{ width: "50px", height: "50px" }} />
         <h2 className="pts">{hero.championPoints} pts</h2>
+        </>
+    }
+    
       </>
     )}
 
@@ -485,8 +629,18 @@ setStats(sortedChampStats);
       <>
         <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${champion2}.png`} alt="" style={{ width: "50px", height: "50px" }} />
         <h2 className="namec">{champion2}</h2>
+        {hero.championLevel >= 10 ? 
+        <> 
+        <img src={`/clevels/10.png`} alt="" style={{ width: "50px", height: "50px" }} />
+        <h2 className="pts">{hero.championPoints} pts</h2>
+        </>
+        
+        :
+        <>
         <img src={`/clevels/${hero.championLevel}.png`} alt="" style={{ width: "50px", height: "50px" }} />
         <h2 className="pts">{hero.championPoints} pts</h2>
+        </>
+    }
       </>
     )}
 
@@ -494,8 +648,18 @@ setStats(sortedChampStats);
       <>
         <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${champion3}.png`} alt="" style={{ width: "50px", height: "50px" }} />
         <h2 className="namec">{champion3}</h2>
+        {hero.championLevel >= 10 ? 
+        <> 
+        <img src={`/clevels/10.png`} alt="" style={{ width: "50px", height: "50px" }} />
+        <h2 className="pts">{hero.championPoints} pts</h2>
+        </>
+        
+        :
+        <>
         <img src={`/clevels/${hero.championLevel}.png`} alt="" style={{ width: "50px", height: "50px" }} />
         <h2 className="pts">{hero.championPoints} pts</h2>
+        </>
+    }
       </>
     )}
   </div>
@@ -507,19 +671,21 @@ setStats(sortedChampStats);
                 {unrank ? (
                     <div className="rank">
                         <div className="title" style={{fontWeight:"600"}}>RANKED FLEX</div>
-                        <img src={unranked} alt="" style={{ width: "140px", height: "140px"}} />
+                        <img src={unranked} alt="" style={{ width: "140px", height: "140px",marginLeft:"12px"}} />
                         <h2 id="elo">UNRANKED</h2>
                     </div>
                 ) : (
                     <>
-                        <div className="rank">
+                        <div className="rank" >
                             <div className="title" style={{fontWeight:"600"}}>RANKED FLEX</div>
-                            <img src={rankimg} alt="" style={{ width: "140px", height: "140px"}} />
+                            
+                            <img src={rankimg} alt="" style={{ width: "140px", height: "140px",marginLeft:"12px"}} />
                             <h2 id="elo">{rank.tier} {rank.rank}</h2>
                             <h2 id="lp">{rank.leaguePoints} LP</h2>
                             <h2 id="win">{rank.wins}W </h2>
                             <h2 id="loss">{rank.losses}L</h2>
                             <h2 id="wr">WIN RATE {(((rank.wins) / (rank.losses + rank.wins)) * 100).toFixed(2)}%</h2>
+                           
                         </div>
                     </>
                 )}
@@ -528,14 +694,14 @@ setStats(sortedChampStats);
                 {unrank2 ? (
                     <div className="rank">
                         <div className="title" style={{fontWeight:"600"}}>RANKED SOLO/DUO</div>
-                        <img src={unranked} alt="" style={{ width: "140px", height: "140px" }} />
+                        <img src={unranked} alt="" style={{ width: "140px", height: "140px",marginLeft:"12px" }} />
                         <h2 id="elo">UNRANKED</h2>
                     </div>
                 ) : (
                     <>
                         <div className="rank">
                             <div className="title" style={{fontWeight:"600"}}>RANKED SOLO/DUO</div>
-                            <img src={rankimg2} alt="" style={{ width: "140px", height: "140px" }} />
+                            <img src={rankimg2} alt="" style={{ width: "140px", height: "140px",marginLeft:"12px" }} />
                             <h2 id="elo">{rank2.tier} {rank2.rank}</h2>
                             <h2 id="lp">{rank2.leaguePoints} LP</h2>
                             <h2 id="win">{rank2.wins}W</h2>
@@ -590,14 +756,15 @@ setStats(sortedChampStats);
         
     </div>
     <div className="itemlist">
+     
+      {match.item0 != 0 ? <img src={`https://opgg-static.akamaized.net/meta/images/lol/14.14.1/item/${match.item0}.png?image=e_upscale,q_auto,f_webp,w_64,h_64&v=1721451321478`} className="itemimg" alt="" /> : <div className="itemimg" style={{backgroundColor:"rgb(26, 25, 29)",display:"inline-block"}}></div>}
+      {match.item1 != 0 ? <img src={`https://opgg-static.akamaized.net/meta/images/lol/14.14.1/item/${match.item1}.png?image=e_upscale,q_auto,f_webp,w_64,h_64&v=1721451321478`} className="itemimg" alt="" /> : <div className="itemimg" style={{backgroundColor:"rgb(26, 25, 29)",display:"inline-block"}}></div>}
+      {match.item2 != 0 ? <img src={`https://opgg-static.akamaized.net/meta/images/lol/14.14.1/item/${match.item2}.png?image=e_upscale,q_auto,f_webp,w_64,h_64&v=1721451321478`} className="itemimg" alt="" /> : <div className="itemimg" style={{backgroundColor:"rgb(26, 25, 29)",display:"inline-block"}}></div>}
+      {match.item3 != 0 ? <img src={`https://opgg-static.akamaized.net/meta/images/lol/14.14.1/item/${match.item3}.png?image=e_upscale,q_auto,f_webp,w_64,h_64&v=1721451321478`} className="itemimg" alt="" /> : <div className="itemimg" style={{backgroundColor:"rgb(26, 25, 29)",display:"inline-block"}}></div>}
+      {match.item4 != 0 ? <img src={`https://opgg-static.akamaized.net/meta/images/lol/14.14.1/item/${match.item4}.png?image=e_upscale,q_auto,f_webp,w_64,h_64&v=1721451321478`} className="itemimg" alt="" /> : <div className="itemimg" style={{backgroundColor:"rgb(26, 25, 29)",display:"inline-block"}}></div>}
+      {match.item5 != 0 ? <img src={`https://opgg-static.akamaized.net/meta/images/lol/14.14.1/item/${match.item5}.png?image=e_upscale,q_auto,f_webp,w_64,h_64&v=1721451321478`} className="itemimg" alt="" /> : <div className="itemimg" style={{backgroundColor:"rgb(26, 25, 29)",display:"inline-block"}}></div>}
+      {match.item6 != 0 ? <img src={`https://opgg-static.akamaized.net/meta/images/lol/14.14.1/item/${match.item6}.png?image=e_upscale,q_auto,f_webp,w_64,h_64&v=1721451321478`} className="itemimg" alt="" /> : <div className="itemimg" style={{backgroundColor:"rgb(26, 25, 29)",display:"inline-block"}}></div>}
 
-    <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item0}.png`} className="itemimg" alt="" />
-    <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item1}.png`} className="itemimg" alt="" />
-    <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item2}.png`} className="itemimg" alt="" />
-    <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item3}.png`} className="itemimg" alt="" />
-    <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item4}.png`} className="itemimg" alt="" />
-    <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item5}.png`} className="itemimg" alt="" />
-    <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item6}.png`} className="itemimg" alt="" />
      
     
      
@@ -608,6 +775,16 @@ setStats(sortedChampStats);
         {meta[index % meta.length].queueId === 440 ? (
   <span id="tittle">
     RANKED FLEX (
+    {(meta[index % meta.length].gameDuration / 60).toFixed(0)}m{" "}
+    {meta[index % meta.length].gameDuration % 60}s)
+  </span>
+) : (
+  ""
+)}
+
+{meta[index % meta.length].queueId === 1700 ? (
+  <span id="tittle">
+    ARENA (
     {(meta[index % meta.length].gameDuration / 60).toFixed(0)}m{" "}
     {meta[index % meta.length].gameDuration % 60}s)
   </span>
@@ -661,36 +838,71 @@ setStats(sortedChampStats);
 
     )}
     <div className="tab">
-        <div className="team" id="team1">
-            {team1 && team1.length > 0 && 
-            <div className="participant" key={team1[index % team1.length][0].teamId}>
+    <div className="team" id="team1">
+  {team1 && team1.length > 0 && (
+    <div className="participant" key={team1[index % team1.length][0].teamId}>
+      {meta[index % meta.length].queueId !== 1700 && (
+        <>
+          <span style={{ top: "4px", left: "4px" }}>
+            <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${team1[index % team1.length][0].championName}.png`} alt="" />
+            <p style={{ fontSize: "10px" }}>{team1[index % team1.length][0].riotIdGameName}</p>
+          </span>
+          <span style={{ top: "44px", left: "4px" }}>
+            <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${team1[index % team1.length][1].championName}.png`} alt="" />
+            <p style={{ fontSize: "10px" }}>{team1[index % team1.length][1].riotIdGameName}</p>
+          </span>
+          <span style={{ top: "84px", left: "4px" }}>
+            <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${team1[index % team1.length][2].championName}.png`} alt="" />
+            <p style={{ fontSize: "10px" }}>{team1[index % team1.length][2].riotIdGameName}</p>
+          </span>
+          <span style={{ top: "124px", left: "4px" }}>
+            <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${team1[index % team1.length][3].championName}.png`} alt="" />
+            <p style={{ fontSize: "10px" }}>{team1[index % team1.length][3].riotIdGameName}</p>
+          </span>
+          <span style={{ top: "164px", left: "4px" }}>
+            <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${team1[index % team1.length][4].championName}.png`} alt="" />
+            <p style={{ fontSize: "10px" }}>{team1[index % team1.length][4].riotIdGameName}</p>
+          </span>
+        </>
+      )}
+    </div>
+  )}
+</div>
 
-            <span style={{top:"4px",left:"4px"}}> <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${team1[index % team1.length][0].championName}.png`} alt="" />{team1[index % team1.length][0].riotIdGameName}</span>
-            <span style={{top:"44px",left:"4px"}}> <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${team1[index % team1.length][1].championName}.png`} alt="" />{team1[index % team1.length][1].riotIdGameName}</span>
-            <span style={{top:"84px",left:"4px"}}> <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${team1[index % team1.length][2].championName}.png`} alt="" />{team1[index % team1.length][2].riotIdGameName}</span>
-            <span style={{top:"124px",left:"4px"}}> <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${team1[index % team1.length][3].championName}.png`} alt="" />{team1[index % team1.length][3].riotIdGameName}</span>
-            <span style={{top:"164px",left:"4px"}}> <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${team1[index % team1.length][4].championName}.png`} alt="" />{team1[index % team1.length][4].riotIdGameName}</span>
-           
-                
-            </div>
-            }
 
-        </div>
-        <div className="team" id="team2">
-            {team1 && team2.length > 0 && 
-            <div className="participant" key={team2[index % team2.length][0].teamId}>
+<div className="team" id="team2">
+  {team2 && team2.length > 0 && (
+    <div className="participant" key={team2[index % team2.length][0].teamId}>
+      {meta[index % meta.length].queueId !== 1700 && (
+        <>
+          <span style={{ top: "4px", left: "4px" }}>
+            <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${team2[index % team2.length][0].championName}.png`} alt="" />
+            <p style={{ fontSize: "10px" }}>{team2[index % team2.length][0].riotIdGameName}</p>
+          </span>
+          <span style={{ top: "44px", left: "4px" }}>
+            <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${team2[index % team2.length][1].championName}.png`} alt="" />
+            <p style={{ fontSize: "10px" }}>{team2[index % team2.length][1].riotIdGameName}</p>
+          </span>
+          <span style={{ top: "84px", left: "4px" }}>
+            <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${team2[index % team2.length][2].championName}.png`} alt="" />
+            <p style={{ fontSize: "10px" }}>{team2[index % team2.length][2].riotIdGameName}</p>
+          </span>
+          <span style={{ top: "124px", left: "4px" }}>
+            <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${team2[index % team2.length][3].championName}.png`} alt="" />
+            <p style={{ fontSize: "10px" }}>{team2[index % team2.length][3].riotIdGameName}</p>
+          </span>
+          <span style={{ top: "164px", left: "4px" }}>
+            <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${team2[index % team2.length][4].championName}.png`} alt="" />
+            <p style={{ fontSize: "10px" }}>{team2[index % team2.length][4].riotIdGameName}</p>
+          </span>
+        </>
+      )}
+    </div>
+  )}
+</div>
 
-            <span style={{top:"4px",left:"4px"}}> <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${team2[index % team2.length][0].championName}.png`} alt="" />{team2[index % team2.length][0].riotIdGameName}</span>
-            <span style={{top:"44px",left:"4px"}}> <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${team2[index % team2.length][1].championName}.png`} alt="" />{team2[index % team2.length][1].riotIdGameName}</span>
-            <span style={{top:"84px",left:"4px"}}> <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${team2[index % team2.length][2].championName}.png`} alt="" />{team2[index % team2.length][2].riotIdGameName}</span>
-            <span style={{top:"124px",left:"4px"}}> <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${team2[index % team2.length][3].championName}.png`} alt="" />{team2[index % team2.length][3].riotIdGameName}</span>
-            <span style={{top:"164px",left:"4px"}}> <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${team2[index % team2.length][4].championName}.png`} alt="" />{team2[index % team2.length][4].riotIdGameName}</span>
-           
-                
-            </div>
-            }
 
-        </div>
+
     </div>
     
   </div>
@@ -706,7 +918,7 @@ setStats(sortedChampStats);
         return (
             <div className="profile" style={{width:"100%"}}>
                 <div className="general">
-                    <h1 style={{color:"whitesmoke"}}>{summonerData.name.toUpperCase()}</h1>
+                    <h1 style={{color:"whitesmoke"}}>{summonerData.gameName.toUpperCase()}</h1>
                     <div className="icon">
                         <img src={img} alt="" style={{ width: "150px", height: "150px", borderRadius: "150px", border: "2px solid whitesmoke",marginTop:"25px" }} />
                         <div className="level">{summonerData.summonerLevel}</div>
@@ -724,8 +936,18 @@ setStats(sortedChampStats);
           <>
             <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${champion1}.png`} alt="" style={{ width: "50px", height: "50px" }} />
             <h2 className="namec">{champion1}</h2>
-            <img src={`/clevels/${hero.championLevel}.png`} alt="" style={{ width: "50px", height: "50px" }} />
-            <h2 className="pts">{hero.championPoints} pts</h2>
+            {hero.championLevel >= 10 ? 
+        <> 
+        <img src={`/clevels/10.png`} alt="" style={{ width: "50px", height: "50px" }} />
+        <h2 className="pts">{hero.championPoints} pts</h2>
+        </>
+        
+        :
+        <>
+        <img src={`/clevels/${hero.championLevel}.png`} alt="" style={{ width: "50px", height: "50px" }} />
+        <h2 className="pts">{hero.championPoints} pts</h2>
+        </>
+    }
           </>
         )}
     
@@ -733,8 +955,18 @@ setStats(sortedChampStats);
           <>
             <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${champion2}.png`} alt="" style={{ width: "50px", height: "50px" }} />
             <h2 className="namec">{champion2}</h2>
-            <img src={`/clevels/${hero.championLevel}.png`} alt="" style={{ width: "50px", height: "50px" }} />
-            <h2 className="pts">{hero.championPoints} pts</h2>
+            {hero.championLevel >= 10 ? 
+        <> 
+        <img src={`/clevels/10.png`} alt="" style={{ width: "50px", height: "50px" }} />
+        <h2 className="pts">{hero.championPoints} pts</h2>
+        </>
+        
+        :
+        <>
+        <img src={`/clevels/${hero.championLevel}.png`} alt="" style={{ width: "50px", height: "50px" }} />
+        <h2 className="pts">{hero.championPoints} pts</h2>
+        </>
+    }
           </>
         )}
     
@@ -742,8 +974,18 @@ setStats(sortedChampStats);
           <>
             <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/champion/${champion3}.png`} alt="" style={{ width: "50px", height: "50px" }} />
             <h2 className="namec">{champion3}</h2>
-            <img src={`/clevels/${hero.championLevel}.png`} alt="" style={{ width: "50px", height: "50px" }} />
-            <h2 className="pts">{hero.championPoints} pts</h2>
+            {hero.championLevel >= 10 ? 
+        <> 
+        <img src={`/clevels/10.png`} alt="" style={{ width: "50px", height: "50px" }} />
+        <h2 className="pts">{hero.championPoints} pts</h2>
+        </>
+        
+        :
+        <>
+        <img src={`/clevels/${hero.championLevel}.png`} alt="" style={{ width: "50px", height: "50px" }} />
+        <h2 className="pts">{hero.championPoints} pts</h2>
+        </>
+    }
           </>
         )}
       </div>
@@ -761,14 +1003,14 @@ setStats(sortedChampStats);
                     {unrank ? (
                         <div className="rank">
                             <div className="title" style={{fontWeight:"600"}}>RANKED FLEX</div>
-                            <img src={unranked} alt="" style={{ width: "140px", height: "140px"}} />
+                            <img src={unranked} alt="" style={{ width: "140px", height: "140px",marginLeft:"12px"}} />
                             <h2 id="elo">UNRANKED</h2>
                         </div>
                     ) : (
                         <>
                             <div className="rank">
                                 <div className="title" style={{fontWeight:"600"}}>RANKED FLEX</div>
-                                <img src={rankimg} alt="" style={{ width: "140px", height: "140px"}} />
+                                <img src={rankimg} alt="" style={{ width: "140px", height: "140px",marginLeft:"12px"}} />
                                 <h2 id="elo">{rank.tier} {rank.rank}</h2>
                                 <h2 id="lp">{rank.leaguePoints} LP</h2>
                                 <h2 id="win">{rank.wins}W</h2>
@@ -782,14 +1024,14 @@ setStats(sortedChampStats);
                     {unrank2 ? (
                         <div className="rank">
                             <div className="title" style={{fontWeight:"600"}}>RANKED SOLO/DUO</div>
-                            <img src={unranked} alt="" style={{ width: "140px", height: "140px" }} />
+                            <img src={unranked} alt="" style={{ width: "140px", height: "140px",marginLeft:"12px" }} />
                             <h2 id="elo">UNRANKED</h2>
                         </div>
                     ) : (
                         <>
                             <div className="rank">
                                 <div className="title" style={{fontWeight:"600"}}>RANKED SOLO/DUO</div>
-                                <img src={rankimg2} alt="" style={{ width: "140px", height: "140px" }} />
+                                <img src={rankimg2} alt="" style={{ width: "140px", height: "140px",marginLeft:"12px" }} />
                                 <h2 id="elo">{rank2.tier} {rank2.rank}</h2>
                                 <h2 id="lp">{rank2.leaguePoints} LP</h2>
                                 <h2 id="win">{rank2.wins}W</h2>
@@ -844,13 +1086,13 @@ setStats(sortedChampStats);
         </div>
         <div className="itemlist">
 
-          <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item0}.png`} className="itemimg" alt="" />
-          <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item1}.png`} className="itemimg" alt="" />
-          <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item2}.png`} className="itemimg" alt="" />
-          <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item3}.png`} className="itemimg" alt="" />
-          <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item4}.png`} className="itemimg" alt="" />
-          <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item5}.png`} className="itemimg" alt="" />
-          <img src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${match.item6}.png`} className="itemimg" alt="" />
+        {match.item0 != 0 ? <img src={`https://opgg-static.akamaized.net/meta/images/lol/14.14.1/item/${match.item0}.png?image=e_upscale,q_auto,f_webp,w_64,h_64&v=1721451321478`} className="itemimg" alt="" /> : <div className="itemimg" style={{backgroundColor:"rgb(26, 25, 29)",display:"inline-block"}}></div>}
+      {match.item1 != 0 ? <img src={`https://opgg-static.akamaized.net/meta/images/lol/14.14.1/item/${match.item1}.png?image=e_upscale,q_auto,f_webp,w_64,h_64&v=1721451321478`} className="itemimg" alt="" /> : <div className="itemimg" style={{backgroundColor:"rgb(26, 25, 29)",display:"inline-block"}}></div>}
+      {match.item2 != 0 ? <img src={`https://opgg-static.akamaized.net/meta/images/lol/14.14.1/item/${match.item2}.png?image=e_upscale,q_auto,f_webp,w_64,h_64&v=1721451321478`} className="itemimg" alt="" /> : <div className="itemimg" style={{backgroundColor:"rgb(26, 25, 29)",display:"inline-block"}}></div>}
+      {match.item3 != 0 ? <img src={`https://opgg-static.akamaized.net/meta/images/lol/14.14.1/item/${match.item3}.png?image=e_upscale,q_auto,f_webp,w_64,h_64&v=1721451321478`} className="itemimg" alt="" /> : <div className="itemimg" style={{backgroundColor:"rgb(26, 25, 29)",display:"inline-block"}}></div>}
+      {match.item4 != 0 ? <img src={`https://opgg-static.akamaized.net/meta/images/lol/14.14.1/item/${match.item4}.png?image=e_upscale,q_auto,f_webp,w_64,h_64&v=1721451321478`} className="itemimg" alt="" /> : <div className="itemimg" style={{backgroundColor:"rgb(26, 25, 29)",display:"inline-block"}}></div>}
+      {match.item5 != 0 ? <img src={`https://opgg-static.akamaized.net/meta/images/lol/14.14.1/item/${match.item5}.png?image=e_upscale,q_auto,f_webp,w_64,h_64&v=1721451321478`} className="itemimg" alt="" /> : <div className="itemimg" style={{backgroundColor:"rgb(26, 25, 29)",display:"inline-block"}}></div>}
+      {match.item6 != 0 ? <img src={`https://opgg-static.akamaized.net/meta/images/lol/14.14.1/item/${match.item6}.png?image=e_upscale,q_auto,f_webp,w_64,h_64&v=1721451321478`} className="itemimg" alt="" /> : <div className="itemimg" style={{backgroundColor:"rgb(26, 25, 29)",display:"inline-block"}}></div>}
 
           
           
@@ -867,6 +1109,15 @@ setStats(sortedChampStats);
     ) : (
       ""
     )}
+    {meta[index % meta.length].queueId === 1700 ? (
+  <span id="tittle">
+    ARENA (
+    {(meta[index % meta.length].gameDuration / 60).toFixed(0)}m{" "}
+    {meta[index % meta.length].gameDuration % 60}s)
+  </span>
+) : (
+  ""
+)}
     
     {meta[index % meta.length].queueId === 420 ? (
       <span  id="tittle">
