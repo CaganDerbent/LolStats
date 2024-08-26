@@ -44,7 +44,7 @@ const Champions = ({API_KEY})=>{
 
                     for(let i = 0;i<championsArray.length;i++){
                         if(keyToFind === championsArray[i].key){
-                            array.push(championsArray[i].name);
+                            array.push(championsArray[i].id);
                             
                         }
                     }
@@ -59,7 +59,7 @@ const Champions = ({API_KEY})=>{
 
                     for(let i = 0;i<championsArray.length;i++){
                         if(keyToFind === championsArray[i].key){
-                            array2.push(championsArray[i].name);
+                            array2.push(championsArray[i].id);
                         
                         }
                     }
@@ -86,7 +86,7 @@ const Champions = ({API_KEY})=>{
         <>
         <div className="profile">
            <div className="rotation">
-            <h1>Free Champion Rotation</h1>
+            <h1>Weekly Free Champion Rotation</h1>
             <div className="line"></div>
             <div className="list">
             {arr && arr.map((champ)=>(

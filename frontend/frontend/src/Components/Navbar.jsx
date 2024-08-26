@@ -10,7 +10,7 @@ const Navbar = ()=>{
             <h1><Link to={'/'} className="link">LolStats</Link></h1>
             <ul>
                 <li>
-                    <Link to={'/champions'} className="link">Champions</Link>
+                    <Link to={'/champions'} className="link">Champion Rotations</Link>
                 </li>
             </ul>
 

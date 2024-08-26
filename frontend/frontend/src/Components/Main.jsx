@@ -29,20 +29,27 @@ const Main = ({API_KEY})=>{
             });
     
             if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                setErr(true)
+                throw new Error(`Bad response !`);
+
             }
-            
+                const body = await response.json();
+                console.log(body)
+           
+                const id = body.puuid;
     
-            const body = await response.json();
-            console.log(body)
-       
-            const id = body.puuid;
+                setData(body);
 
-            setData(body);
+                if(id != undefined){
+                    navigate(`/summoner/${id}`,{state:body}) 
 
-         
+                }
+                else{
+                    setErr(true)
 
-            navigate(`/summoner/${id}`,{state:body})
+                }
+
+
 
         } catch (err) {
             setErr(true)
@@ -52,15 +59,15 @@ const Main = ({API_KEY})=>{
 
     return(
         <>
-        <div className="main">
-
-            <div className="xxx">
+        <div className="main" style={{backgroundImage: 'url("/8359896.jpg")'}}>
+        <h1 style={{color:"whitesmoke",marginTop:"80px",zIndex:"2"}}>Search for a summoner</h1>
+            <div className="xxx"style={{zIndex:"2"}}>
                 <input type="text" placeholder="SummonerName" id='text' autoComplete="off"  onChange={(e) => setName(e.target.value)} value={name}/>
-                <input type="text" placeholder="#" id='text2' autoComplete="off" style={{width:"124px"}} onChange={(e) => setId(e.target.value)} value={rid}/>
+                <input type="text" placeholder="#" id='text2' autoComplete="off" style={{width:"124px",textTransform: "uppercase"}} onChange={(e) => setId(e.target.value)} value={rid}/>
                 <button onClick={find} id="searchbutton" style={{backgroundColor:"rgb(45, 46, 63)",color:"whitesmoke",fontSize:"16px"}}>Find</button>
             </div>
           
-        {err ? <h1 style={{color:"whitesmoke",marginTop:"30px"}}>Summoner name not found.</h1> :<h1></h1>}
+        {err ? <h1 style={{color:"whitesmoke",marginTop:"80px",zIndex:"2"}}>Summoner name not found.</h1> :<h1></h1>}
 
         </div>
 
