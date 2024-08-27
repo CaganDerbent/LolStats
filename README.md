@@ -2,7 +2,7 @@
 LolStats is a website that uses the Riot API to provide information about League of Legends summoners, match history, champion statistics and champions rotations.
 
 # Documentation
-All the necessary information can be found at the link: https://developer.riotgames.com/docs/lol
+All the necessary information about Riot API can be found at the link: https://developer.riotgames.com/docs/lol
 
 # Footage
 ![Ekran görüntüsü 2024-08-27 115331](https://github.com/user-attachments/assets/bfd5cc95-b3ea-40e9-a705-27aa8af6bd88)
